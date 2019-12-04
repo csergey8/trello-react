@@ -1,8 +1,8 @@
 export const setToLocalStorage = async (key: string, data: any) => {
-  await window.localStorage.setItem(key, data);
+  window.localStorage.setItem(key, data);
 }
 
-export const getFromLocalStorage = async (name: string) => {
-  const token = await window.localStorage.getItem(name);
+export const getFromLocalStorage = async (key: string) => {
+  const token = window.localStorage.getItem(key);
   return token
 }
