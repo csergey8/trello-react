@@ -14,7 +14,6 @@ export const Header: React.SFC<Props> = ({ isLoggedIn, login }) => {
   const renderUserLogin = () => isLoggedIn ?
     <Typography variant="h5">Hello User</Typography>
     : <a href={login}><Button color="inherit">Login</Button></a>
-  console.log(isLoggedIn)
   return (
     <AppBar position="static">
       <Toolbar>
