@@ -13,25 +13,20 @@ interface Board {
   desc?: string;
   pinned: boolean;
 }
-
-export interface BoardsCards {
-  [key: string]: any;
-}
+//Q why typescript does not show error if interface doesnt describe all properties setting in setState
 
 interface AppState {
   token: string;
   boards: Array<Board>;
-  boardsCards?: BoardsCards
 }
+
 
 export class App extends React.Component<{},AppState> {
   public state = {
     token: '',
-    boards: [],
-    boardsCards: {}
+    boards: []
   }
-
-  //Q do i need to set type of returned object in methods or fiunction in rsc
+  //Q do i need to set returned type in methods or function in rsc
 
   private async setToken(token: string) {
     this.setState({
@@ -59,29 +54,28 @@ export class App extends React.Component<{},AppState> {
 
   private async getBoardsWithCards(){
     const response = await fetch(`https://trello.com/1/members/me/boards?token=${this.state.token}&key=${REACT_APP_API_KEY}`)
-    const boardsData = await response.json();
-    //Q if this.setState is async and set data will lately
-    if(this.state.boards){
-      let boardsCards: BoardsCards = {};
-      boardsData.map( async (board: any) => {
-        //Q how to make multiply async 
-        let boardCard = {};
-        const response = await fetch(`https://trello.com//1/boards/${board.id}/cards?key=${REACT_APP_API_KEY}&token=${this.state.token}`);
-        const data = await response.json();
-        boardsCards[board.id] = data
-      })
+    const boards = await response.json();
+    const newBoards: any[] = [];
+    boards.map(async (board: any) => {
+      //Q how to make multiply async 
+      let newBoard = {};
+      const response = await fetch(`https://trello.com//1/boards/${board.id}/cards?key=${REACT_APP_API_KEY}&token=${this.state.token}`);
+      const data = await response.json();
+      newBoard = {
+        ...board,
+        cards: data
+      }
+      newBoards.push(newBoard)
       this.setState({
-        boardsCards,
-        boards: boardsData
-      })
-    }
-  }
+        boards: newBoards
+    })
+    })
+    // async await setState here
+    
+}
 
   private renderBoards() {
-    //this.state.boardsCards[this.state.boardsCards[0].id])
-    //why i can't use board.name
-    //this.state.boardsCards[board['id']]
-    return this.state.boards.map(board => <Board key={board['name']} name={board['name']} boardCards={this.state.boardsCards} id={board['id']}/>)
+    return this.state.boards.map((board: any) => <Board key={board.id}  board={board}/>)
   }
 
   public async componentDidMount() {
@@ -99,7 +93,7 @@ export class App extends React.Component<{},AppState> {
     return (
       <React.Fragment>
         <Header isLoggedIn={this.isLoggedIn()} login={this.login()} />
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" style={{ display: 'flex'}}>
           {this.state.boards.length > 0 ? this.renderBoards(): 'no boards'}     
         </Container>
       </React.Fragment>

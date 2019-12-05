@@ -1,19 +1,27 @@
 import * as React from 'react';
-import { BoardsCards } from '../App/App';
-import { Card } from '../Card';
+import Card from '@material-ui/core/Card';
+import { Task } from '../Task';
+import Typography from '@material-ui/core/Typography';
 
-interface Props {
-    name?: string;
-    id: string;
-    boardCards: any;
+
+interface IProps {
+    board: {
+        cards: any[],
+        name: string
+    };
 }
 
-export const Board: React.SFC<Props> = ({ name, id, boardCards }) => {
-    console.log(id, boardCards['5de56c2ffe5ed05f53262d9b']);
-    console.log(boardCards)
+export const Board: React.SFC<IProps> = ({ board }) => {
     return (
         <React.Fragment>
-            Board
+            <Card style={{ margin: '20px', width: 300}}>
+                <Typography color="textSecondary" variant="h5" gutterBottom>
+                    {board.name}
+                </Typography>
+                    {
+                        board.cards.map(task => (<Task key={task.id} text={task.name} />))
+                    }
+            </Card>
         </React.Fragment>
     )
 }
