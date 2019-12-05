@@ -9,8 +9,7 @@ interface Props {
 }
 
 export const Board: React.SFC<Props> = ({ name, id, boardCards }) => {
-    console.log(id, boardCards['5de56c2ffe5ed05f53262d9b']);
-    console.log(boardCards)
+    console.log(id, boardCards);
     return (
         <React.Fragment>
             Board

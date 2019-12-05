@@ -21,7 +21,7 @@ export interface BoardsCards {
 interface AppState {
   token: string;
   boards: Array<Board>;
-  boardsCards?: BoardsCards
+  boardsCards?: any
 }
 
 export class App extends React.Component<{},AppState> {
@@ -81,7 +81,12 @@ export class App extends React.Component<{},AppState> {
     //this.state.boardsCards[this.state.boardsCards[0].id])
     //why i can't use board.name
     //this.state.boardsCards[board['id']]
-    return this.state.boards.map(board => <Board key={board['name']} name={board['name']} boardCards={this.state.boardsCards} id={board['id']}/>)
+  return this.state.boards.map(board => {
+  console.log(this.state.boardsCards);
+  const id = board['id'];
+  console.log(id);
+  console.log(this.state.boardsCards[''])
+  return <Board key={board['name']} name={board['name']} boardCards={this.state.boardsCards[board['id']]} id={board['id']}/>})
   }
 
   public async componentDidMount() {
