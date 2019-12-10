@@ -8,12 +8,12 @@ import Avatar from '@material-ui/core/Avatar';
 import styles from './Header.module.scss';
 
 interface Props {
-  isLoggedIn: boolean;
-  login?: string;
+  isLoggedIn: string;
   initials?: string;
 }
 
-export const Header: React.FC<Props> = ({ isLoggedIn, login, initials }) => {
+export const Header: React.FC<Props> = ({ isLoggedIn,  initials }) => {
+  console.log(isLoggedIn)
   const renderUserControlPanel = () => isLoggedIn ?
     <IconButton
       edge="end"
@@ -25,9 +25,7 @@ export const Header: React.FC<Props> = ({ isLoggedIn, login, initials }) => {
     >
       <Avatar>{initials}</Avatar>
     </IconButton>
-    : <Button color="secondary" variant="contained">
-      <a href={login} className={styles.header_btn} >Login</a>
-    </Button>
+    : null
   return (
     <AppBar position="static">
       <Toolbar>
