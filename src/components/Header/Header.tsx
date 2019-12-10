@@ -10,7 +10,7 @@ interface Props {
   login?: string;
 }
 
-export const Header: React.SFC<Props> = ({ isLoggedIn, login }) => {
+export const Header: React.FC<Props> = ({ isLoggedIn, login }) => {
   const renderUserLogin = () => isLoggedIn ?
     <Typography variant="h5">Hello User</Typography>
     : <a href={login}><Button color="inherit">Login</Button></a>
