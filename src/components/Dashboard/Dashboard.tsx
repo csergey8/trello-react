@@ -1,12 +1,18 @@
-import React from 'react';
+import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 
-export class Dashboard extends React.Component {
-  render() {
-    return (
-      <div>
-        
-      </div>
-    );
-  }
+interface DashboardProps extends RouteChildrenProps {
+  hello?: string;
+  token?: string;
 }
 
+export class Dashboard extends React.Component<DashboardProps> {
+
+  goBack = () => {
+    this.props.history.goBack();
+  }
+
+  render() {
+    return <h2 onClick={this.goBack}>Hello from dashboard</h2>
+  }
+}

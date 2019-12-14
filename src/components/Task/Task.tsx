@@ -7,7 +7,7 @@ interface IProps {
     text: string
 }
 
-export const Task: React.SFC<IProps> = ({ text }) => {
+export const Task: React.SFC<IProps> = ({ text }: IProps) => {
     return (
         <Paper className={styles.task}>
             <Typography variant="body2">{text}</Typography>
