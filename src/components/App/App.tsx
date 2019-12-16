@@ -5,9 +5,10 @@ import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setToLocalStorage, getFromLocalStorage } from '../../utils';
 import styles from './App.module.scss';
-import { routes } from './routes';
-import { Route, Switch, RouteChildrenProps, Redirect } from 'react-router';
+import { routes, AppRoute } from './routes';
+import { Route, Switch, RouteChildrenProps, Redirect, withRouter } from 'react-router';
 import { OAuth } from '../OAuth';
+import { ProtectedRoute } from '../ProtectedRoute';
 
 const TOKEN_STORAGE = 'TOKEN';
 const { REACT_APP_REDIRECT_URL, REACT_APP_SCOPE, REACT_APP_API_KEY, REACT_APP_APP_NAME } = process.env;
@@ -22,20 +23,20 @@ interface Board {
 interface AppState {
   token: string;
   boards: Array<Board>;
-  userInfo: {
-    fullName: string;
-    initials: string;
-  }
+  userProfile: any
 }
 
-export class App extends React.Component<any,AppState> {
-  public state = {
-    token: '',
-    boards: [],
-    userInfo: {
-      fullName: '',
-      initials: ''
-    }
+const INTIAL_STATE = {
+  token: '',
+  boards: [],
+  userProfile: undefined
+}
+
+class App extends React.Component<any,AppState> {
+  public state = INTIAL_STATE;
+
+  componentDidMount() {
+    this.getToken();
   }
 
   private setToken = (token: string) => {
@@ -47,16 +48,44 @@ export class App extends React.Component<any,AppState> {
 
   private async getToken() {
     const token = await getFromLocalStorage(TOKEN_STORAGE);
-    return token
+    if(!token) {
+      debugger;
+      return this.navigateToLogin()
+    } 
+    const url = (`https://api.trello.com/1/members/me?token=${token}&key=${REACT_APP_API_KEY}`)
+    const response = await fetch(url);
+    if(response.ok === true && response.status === 200){
+      const userProfile = await response.json();
+      this.setProfile(userProfile);
+      this.setToken(token);
+      return this.navigateToDashboard();
+    } 
+    this.navigateToLogin();
+    
+    
   }
 
-  private isLoggedIn() {
+  private logOut = () => {
+    this.setState(INTIAL_STATE);
+    this.navigateToLogin();
+  }
+
+  private navigateToDashboard() {
+    return this.props.history.push('/dashboard');
+  }
+
+  private navigateToLogin() {
+    return this.props.history.push('/login')
+  }
+
+  private setProfile = (userProfile: any) => {
+      this.setState({
+        userProfile
+      })
+  }
+
+  private get isLoggedIn() {
     return !!this.state.token
-  }
-
-  private getUserInitials(fullName: string) {
-    const fullNameArray = fullName.split(' ')
-    return `${fullNameArray[0][0]}${fullNameArray[1][0]}`
   }
 
   private login() {
@@ -82,17 +111,17 @@ export class App extends React.Component<any,AppState> {
   })
 }
 
-  private async getUserInfo(){
-    const response = await fetch(`https://api.trello.com/1/members/me/?token=${this.state.token}&key=${REACT_APP_API_KEY}`);
-    const { fullName } = await response.json();
-    const initials = this.getUserInitials(fullName);
-    this.setState({
-      userInfo:{
-        fullName,
-        initials
-      }
-    })
-  }
+  // private async getUserInfo(){
+  //   const response = await fetch(`https://api.trello.com/1/members/me/?token=${this.state.token}&key=${REACT_APP_API_KEY}`);
+  //   const { fullName } = await response.json();
+  //   const initials = this.getUserInitials(fullName);
+  //   this.setState({
+  //     userInfo:{
+  //       fullName,
+  //       initials
+  //     }
+  //   })
+  // }
 
   private renderBoards() {
     return this.state.boards.map((board: any) => <Board key={board.id}  board={board}/>)
@@ -101,23 +130,33 @@ export class App extends React.Component<any,AppState> {
   private renderContent() {
     return (
       <Switch>
-        { routes.map((route: any, i: number) => <Route
-          exact={route.exact}
-          key={i}
-          path={route.path}
-          render={(props) => route.render({...props})}
-          />
-        )}
+        { routes.map(this.renderRoute)}
         <Route path="/oauth" render={(props: RouteChildrenProps) => <OAuth {...props} onSetToken={this.setToken} />} />
         <Redirect to="/404" />
       </Switch>
     )
   }
 
+  private renderRoute = (route: AppRoute, i: number) => {
+    if(route.isProtected){
+      return <ProtectedRoute
+        {...route}
+        key={route.path}
+        isAuthenticated={this.isLoggedIn}
+      />
+    } else {
+      return <Route
+        isAuthenticated={this.isLoggedIn}
+        key={route.path}
+        {...route}
+      />
+    }
+  }
+
   public render() {
     return (
       <React.Fragment>
-        <Header isLoggedIn={this.state.token} initials={this.state.userInfo.initials}/>
+        <Header userProfile={this.state.userProfile} logOut={this.logOut} />
         {this.renderContent()}
         {/* <Container maxWidth="lg" className={this.state.boards.length > 0 ? styles.container : styles.container_loader}>
           {this.state.boards.length > 0 ? this.renderBoards(): <CircularProgress />}     
@@ -128,3 +167,6 @@ export class App extends React.Component<any,AppState> {
   
 }
 
+const appWithRouter = withRouter(App);
+
+export { appWithRouter as App };
