@@ -5,6 +5,8 @@ import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setToLocalStorage, getFromLocalStorage } from '../../utils';
 import styles from './App.module.scss';
+import { Provider } from 'react-redux';
+import { store } from '../../redux';
 import { routes, AppRoute } from './routes';
 import { Route, Switch, RouteChildrenProps, Redirect, withRouter } from 'react-router';
 import { OAuth } from '../OAuth';
@@ -84,10 +86,6 @@ class App extends React.Component<any,AppState> {
       })
   }
 
-  private get isLoggedIn() {
-    return !!this.state.token
-  }
-
   private login() {
     return `https://trello.com/1/authorize?return_url=${REACT_APP_REDIRECT_URL}&expiration=1day&name=${REACT_APP_APP_NAME}&scope=${REACT_APP_SCOPE}&response_type=token&key=${REACT_APP_API_KEY}`;
   }
@@ -142,11 +140,9 @@ class App extends React.Component<any,AppState> {
       return <ProtectedRoute
         {...route}
         key={route.path}
-        isAuthenticated={this.isLoggedIn}
       />
     } else {
       return <Route
-        isAuthenticated={this.isLoggedIn}
         key={route.path}
         {...route}
       />
@@ -155,13 +151,13 @@ class App extends React.Component<any,AppState> {
 
   public render() {
     return (
-      <React.Fragment>
+      <Provider store={store}>
         <Header userProfile={this.state.userProfile} logOut={this.logOut} />
         {this.renderContent()}
         {/* <Container maxWidth="lg" className={this.state.boards.length > 0 ? styles.container : styles.container_loader}>
           {this.state.boards.length > 0 ? this.renderBoards(): <CircularProgress />}     
         </Container> */}
-      </React.Fragment>
+      </Provider>
     );
   }
   

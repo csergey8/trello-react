@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { Route, Redirect, RouteProps, RouteComponentProps } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 interface PrivatRouterProps extends RouteProps {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
   userProfile?: any;
   children?: React.ReactNode;
 }
 
 
-export const ProtectedRoute: React.FC<PrivatRouterProps> = ({ children, render, isAuthenticated, ...rest }: PrivatRouterProps) => {
+const ProtectedRoute: React.FC<PrivatRouterProps> = ({ children, render, isAuthenticated, ...rest }: PrivatRouterProps) => {
+  debugger;
   return (
     <Route
       {...rest}
@@ -27,3 +29,11 @@ export const ProtectedRoute: React.FC<PrivatRouterProps> = ({ children, render, 
     />
   );
 }
+
+const mapStateToProps = (state: any) => ({
+  isAuthenticated: state.authReducer.isAuthenticated
+})
+
+const ProtectedRouteWithRedux = connect(mapStateToProps)(ProtectedRoute);
+
+export { ProtectedRouteWithRedux as ProtectedRoute }
