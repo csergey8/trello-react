@@ -7,13 +7,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import styles from './Header.module.scss';
 import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { getAuthAction } from '../../redux/auth';
 
 interface HeaderProps {
   userProfile?: any;
   logOut: () => any;
+  getAuth: () => any;
 }
 
-export const Header: React.FC<HeaderProps> = ({userProfile, logOut}: HeaderProps) => {
+const Header: React.FC<HeaderProps> = ({userProfile, logOut, getAuth}: HeaderProps) => {
   const getUserInitials = (fullName: any): any => {
     const fullNameArray = fullName.split(' ')
     return `${fullNameArray[0][0]}${fullNameArray[1][0]}`
@@ -36,6 +39,9 @@ export const Header: React.FC<HeaderProps> = ({userProfile, logOut}: HeaderProps
         <Button onClick={logOut}>
           Logout
         </Button>
+        <Button onClick={getAuth}>
+          Login
+        </Button>
         <IconButton edge="start" color="inherit" aria-label="menu">
         </IconButton>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -46,4 +52,13 @@ export const Header: React.FC<HeaderProps> = ({userProfile, logOut}: HeaderProps
     </AppBar>
   );
 };
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getAuth: () => dispatch(getAuthAction())
+  }
+}
+
+const HeaderWithRedux = connect(null, mapDispatchToProps)(Header);
+export { HeaderWithRedux as Header};
 
