@@ -45,7 +45,7 @@ export const routes: Array<AppRoute> = [
         path: ROUTES_URLS.HOME,
         isHidden: true,
         exact: true,
-        render: () => <Redirect to="/dashboard" />
+        render: () => <Redirect to={ROUTES_URLS.DASHBOARD} />
     },
     {
         path: ROUTES_URLS.NOT_FOUND,

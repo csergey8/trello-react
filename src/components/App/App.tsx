@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setToLocalStorage, getFromLocalStorage } from '../../utils';
 import styles from './App.module.scss';
-import { routes, AppRoute } from './routes';
+import { routes, AppRoute, ROUTES_URLS } from './routes';
 import { Route, Switch, RouteChildrenProps, Redirect, withRouter } from 'react-router';
 import { OAuth } from '../OAuth';
 import { ProtectedRoute } from '../ProtectedRoute';
@@ -71,11 +71,11 @@ class App extends React.Component<any,AppState> {
   }
 
   private navigateToDashboard() {
-    return this.props.history.push('/dashboard');
+    return this.props.history.push(ROUTES_URLS.DASHBOARD);
   }
 
   private navigateToLogin() {
-    return this.props.history.push('/login')
+    return this.props.history.push(ROUTES_URLS.LOGIN)
   }
 
   private setProfile = (userProfile: any) => {
