@@ -1,0 +1,4 @@
+export enum ACTION_TYPES {
+    SET_TOKEN='@@AUTH/SET_TOKEN',
+    GET_TOKEN='@@AUTH/GET_TOKEN'
+  }

@@ -8,15 +8,15 @@ import Avatar from '@material-ui/core/Avatar';
 import styles from './Header.module.scss';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getAuthAction } from '../../redux/auth';
+import { getTokenAction } from '../../redux/auth';
 
 interface HeaderProps {
   userProfile?: any;
-  logOut: () => any;
-  getAuth: () => any;
+  logOut?: () => any;
+  getToken?: () => any;
 }
 
-const Header: React.FC<HeaderProps> = ({userProfile, logOut, getAuth}: HeaderProps) => {
+const Header: React.FC<HeaderProps> = ({userProfile, logOut, getToken}: HeaderProps) => {
   const getUserInitials = (fullName: any): any => {
     const fullNameArray = fullName.split(' ')
     return `${fullNameArray[0][0]}${fullNameArray[1][0]}`
@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({userProfile, logOut, getAuth}: HeaderPro
         <Button onClick={logOut}>
           Logout
         </Button>
-        <Button onClick={getAuth}>
+        <Button onClick={getToken}>
           Login
         </Button>
         <IconButton edge="start" color="inherit" aria-label="menu">
@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({userProfile, logOut, getAuth}: HeaderPro
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getAuth: () => dispatch(getAuthAction())
+    getToken: () => dispatch(getTokenAction())
   }
 }
 

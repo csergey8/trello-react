@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Header } from '../Header';
 import { Board } from '../Board';
+import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setToLocalStorage, getFromLocalStorage } from '../../utils';
+import { init } from '../../redux/initiazilation';
 import styles from './App.module.scss';
-import { Provider } from 'react-redux';
-import { store } from '../../redux';
-import { routes, AppRoute } from './routes';
-import { Route, Switch, RouteChildrenProps, Redirect, withRouter } from 'react-router';
+import { routes, AppRoute, ROUTES_URLS } from './routes';
+import { Route, Switch, RouteChildrenProps, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
 import { OAuth } from '../OAuth';
 import { ProtectedRoute } from '../ProtectedRoute';
 
@@ -25,7 +25,16 @@ interface Board {
 interface AppState {
   token: string;
   boards: Array<Board>;
-  userProfile: any
+  userProfile: any;
+}
+
+interface AppProps extends RouteComponentProps {
+  onInit: () => void
+}
+
+interface CustomToken {
+  token: string;
+  expireIn: number;
 }
 
 const INTIAL_STATE = {
@@ -34,80 +43,33 @@ const INTIAL_STATE = {
   userProfile: undefined
 }
 
-class App extends React.Component<any,AppState> {
+class App extends React.Component<AppProps,AppState> {
   public state = INTIAL_STATE;
 
-  componentDidMount() {
-    this.getToken();
+  componentWillMount() {
+    this.props.onInit()
   }
 
-  private setToken = (token: string) => {
-    this.setState({
-      token
-    })
-    setToLocalStorage(TOKEN_STORAGE, token)
-  }
+ 
 
-  private async getToken() {
-    const token = await getFromLocalStorage(TOKEN_STORAGE);
-    if(!token) {
-      debugger;
-      return this.navigateToLogin()
-    } 
-    const url = (`https://api.trello.com/1/members/me?token=${token}&key=${REACT_APP_API_KEY}`)
-    const response = await fetch(url);
-    if(response.ok === true && response.status === 200){
-      const userProfile = await response.json();
-      this.setProfile(userProfile);
-      this.setToken(token);
-      return this.navigateToDashboard();
-    } 
-    this.navigateToLogin();
-    
-    
-  }
-
-  private logOut = () => {
-    this.setState(INTIAL_STATE);
-    this.navigateToLogin();
-  }
-
-  private navigateToDashboard() {
-    return this.props.history.push(ROUTES_URLS.DASHBOARD);
-  }
-
-  private navigateToLogin() {
-    return this.props.history.push(ROUTES_URLS.LOGIN)
-  }
-
-  private setProfile = (userProfile: any) => {
-      this.setState({
-        userProfile
-      })
-  }
-
-  private login() {
-    return `https://trello.com/1/authorize?return_url=${REACT_APP_REDIRECT_URL}&expiration=1day&name=${REACT_APP_APP_NAME}&scope=${REACT_APP_SCOPE}&response_type=token&key=${REACT_APP_API_KEY}`;
-  }
-
-  private async getBoardsWithCards(){
-    const response = await fetch(`https://trello.com/1/members/me/boards?token=${this.state.token}&key=${REACT_APP_API_KEY}`)
-    const boards = await response.json();
-    const newBoards: any[] = [];
-    boards.map(async (board: any) => {
-      let newBoard = {};
-      const response = await fetch(`https://trello.com/1/boards/${board.id}/cards?key=${REACT_APP_API_KEY}&token=${this.state.token}`);
-      const data = await response.json();
-      newBoard = {
-        ...board,
-        cards: data
-      }
-      newBoards.push(newBoard)
-      this.setState({
-        boards: newBoards
-    })
-  })
-}
+//   private async getBoardsWithCards(){
+//     const response = await fetch(`https://trello.com/1/members/me/boards?token=${this.state.token}&key=${REACT_APP_API_KEY}`)
+//     const boards = await response.json();
+//     const newBoards: any[] = [];
+//     boards.map(async (board: any) => {
+//       let newBoard = {};
+//       const response = await fetch(`https://trello.com/1/boards/${board.id}/cards?key=${REACT_APP_API_KEY}&token=${this.state.token}`);
+//       const data = await response.json();
+//       newBoard = {
+//         ...board,
+//         cards: data
+//       }
+//       newBoards.push(newBoard)
+//       this.setState({
+//         boards: newBoards
+//     })
+//   })
+// }
 
   // private async getUserInfo(){
   //   const response = await fetch(`https://api.trello.com/1/members/me/?token=${this.state.token}&key=${REACT_APP_API_KEY}`);
@@ -121,15 +83,11 @@ class App extends React.Component<any,AppState> {
   //   })
   // }
 
-  private renderBoards() {
-    return this.state.boards.map((board: any) => <Board key={board.id}  board={board}/>)
-  }
-
   private renderContent() {
     return (
       <Switch>
         { routes.map(this.renderRoute)}
-        <Route path="/oauth" render={(props: RouteChildrenProps) => <OAuth {...props} onSetToken={this.setToken} />} />
+        <Route path={ROUTES_URLS.OAUTH} render={(props: RouteChildrenProps) => <OAuth {...props} />} />
         <Redirect to="/404" />
       </Switch>
     )
@@ -151,18 +109,19 @@ class App extends React.Component<any,AppState> {
 
   public render() {
     return (
-      <Provider store={store}>
-        <Header userProfile={this.state.userProfile} logOut={this.logOut} />
+      <>
+        <Header logOut={() => console.log('logout')} />
         {this.renderContent()}
-        {/* <Container maxWidth="lg" className={this.state.boards.length > 0 ? styles.container : styles.container_loader}>
-          {this.state.boards.length > 0 ? this.renderBoards(): <CircularProgress />}     
-        </Container> */}
-      </Provider>
+      </>
     );
   }
   
 }
 
-const appWithRouter = withRouter(App);
+const mapDispatchToProps = (dispatch: any) => ({
+  onInit: () => dispatch(init())
+})
+
+const appWithRouter = withRouter(connect(undefined, mapDispatchToProps)(App));
 
 export { appWithRouter as App };
