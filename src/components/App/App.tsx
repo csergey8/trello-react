@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setToLocalStorage, getFromLocalStorage } from '../../utils';
-import { init } from '../../redux/initiazilation';
+import { initThunk } from '../../redux/initialization'
 import styles from './App.module.scss';
 import { routes, AppRoute, ROUTES_URLS } from './routes';
 import { Route, Switch, RouteChildrenProps, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
@@ -110,7 +110,7 @@ class App extends React.Component<AppProps,AppState> {
   public render() {
     return (
       <>
-        <Header logOut={() => console.log('logout')} />
+        <Header {...this.props}/>
         {this.renderContent()}
       </>
     );
@@ -119,7 +119,7 @@ class App extends React.Component<AppProps,AppState> {
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-  onInit: () => dispatch(init())
+  onInit: () => dispatch(initThunk())
 })
 
 const appWithRouter = withRouter(connect(undefined, mapDispatchToProps)(App));

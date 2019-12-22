@@ -1,17 +1,14 @@
 import { combineReducers, compose, createStore, applyMiddleware } from 'redux';
 import { connectRouter } from 'connected-react-router'
-import auth, { AuthState } from './auth';
-import { boardsReducer } from './boards'
+import auth, { AuthState, authMiddlewares } from './auth';
+import http, { httpMiddlewares, HTTPState } from './http';
+import { initMiddleware } from './initialization';
 import { createBrowserHistory } from 'history';
-import { userProfileReducer } from './userProfile';
-import { routerMiddleware } from 'connected-react-router';
-import ReduxThunk from 'redux-thunk';
-
+import { routerMiddleware } from 'connected-react-router'
 export interface AppState {
   router: any;
   auth: AuthState;
-  userProfileReducer: any;
-  boardsReducer: any;
+  http: HTTPState;
 }
 
 // const t = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
@@ -27,15 +24,14 @@ export default function configureStore() {
   const rootReducer = (history: any) => combineReducers<AppState>({
     router: connectRouter(history),
     auth,
-    userProfileReducer,
-    boardsReducer
+    http
   });
 
   return createStore(
     rootReducer(history),
     undefined,
     composeEnhancers(
-      applyMiddleware(routerMiddleware(history), ReduxThunk)
+      applyMiddleware(routerMiddleware(history), ...authMiddlewares, ...httpMiddlewares, ...initMiddleware)
     )
   );
 }

@@ -5,11 +5,11 @@ export enum ACTION_TYPES {
 }
 
 export interface UserProfileState {
-    profile?: {}
+    profile?: any
 }
 
 const initialState: UserProfileState = {
-    profile: {}
+    profile: null
 }
 
 export const userProfileReducer = (state = initialState, action: any) => {
@@ -24,6 +24,14 @@ export const userProfileReducer = (state = initialState, action: any) => {
     }
 }
 
-export const getUserProfile = (token: string) => {
-    
+export const getUserProfileAction = (profile: any) => ({
+    type: ACTION_TYPES.GET_USER_PROFILE,
+    payload: profile
+})
+
+export const getUserProfileThunk = () => async(dispatch: any, getState: any) => {
+    const { auth } = getState();
+    const response = await fetch(`https://api.trello.com/1/members/me/?token=${auth.token}&key=${process.env.REACT_APP_API_KEY}`);
+    const data = await response.json();
+    dispatch(getUserProfileAction(data));
 }

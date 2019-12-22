@@ -4,23 +4,26 @@ import { Task } from '../Task';
 import Typography from '@material-ui/core/Typography';
 import styles from './Board.module.scss';
 
-interface IProps {
+interface BoardProps {
     board: {
-        cards: any[],
-        name: string
+        cards?: any[],
+        name: string, 
+        prefs?: any
     };
 }
 
-export const Board: React.FC<IProps> = ({ board }: IProps) => {
+
+
+export const Board: React.FC<BoardProps> = ({ board }: BoardProps) => {
+    const style = {
+        background: board.prefs.backgroundImage ? board.prefs.backgroundImage : board.prefs.background
+    }
     return (
         <React.Fragment>
-            <Card className={styles.card}>
+            <Card className={styles.card} style={style}>
                 <Typography color="textSecondary" variant="h6" gutterBottom>
                     {board.name}
                 </Typography>
-                    {
-                        board.cards.map(task => (<Task key={task.id} text={task.name} />))
-                    }
             </Card>
         </React.Fragment>
     )
