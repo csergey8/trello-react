@@ -6,8 +6,6 @@ const APP_TOKEN = 'TREELLO_CUSTOM_APP_TOKEN';
 export const getTokenAction = () => ({
   type: ACTION_TYPES.GET_TOKEN
 })
-      
-
   
 export const setTokenAction = (token: string) => ({
     type: ACTION_TYPES.SET_TOKEN,

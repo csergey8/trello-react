@@ -4,11 +4,13 @@ import { Login } from '../Login';
 import { Dashboard } from '../Dashboard';
 import { NotFound } from '../NotFound';
 import { Profile } from '../Profile';
+import { Board } from '../Board';
 
 export enum ROUTES_URLS {
     HOME = '/',
     LOGIN = '/login',
     DASHBOARD = '/dashboard',
+    BOARD = '/board/:id',
     PROFILE = '/profile',
     OAUTH = '/oauth',
     NOT_FOUND = '/404',
@@ -46,6 +48,12 @@ export const routes: Array<AppRoute> = [
         isHidden: true,
         exact: true,
         render: () => <Redirect to={ROUTES_URLS.DASHBOARD} />
+    },
+    {
+        path: ROUTES_URLS.BOARD,
+        isHidden: true,
+        exact: true,
+        render: (props: any) => <Board {...props}/>
     },
     {
         path: ROUTES_URLS.NOT_FOUND,

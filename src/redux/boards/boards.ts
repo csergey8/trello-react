@@ -1,3 +1,5 @@
+import { getCardsThunk } from "../cards"
+
 export enum ACTION_TYPES {
   GET_BOARDS = '@@BOARDS/GET_BOARDS'
 }
@@ -33,5 +35,6 @@ export const getBoardsThunk = () => async (dispatch: any, getState: any) => {
   const response = await fetch(url);
   const data = await response.json();
   dispatch(getBoardsAction(data));
+  dispatch(getCardsThunk(data));
 }
 

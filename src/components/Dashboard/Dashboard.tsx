@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { getBoardsThunk } from '../../redux/boards';
 import styles from './Dashboard.module.scss';
-import { Board } from '../Board';
+import { BoardCard } from '../BoardCard';
 import { getUserProfileThunk } from '../../redux/userProfile';
 
 interface DashboardProps extends RouteChildrenProps {
@@ -26,7 +26,7 @@ class Dashboard extends React.Component<DashboardProps> {
   }
 
   public renderBoards = () => {
-    return this.props.boards ? this.props.boards.map(board => <Board board={board} />) : null
+    return this.props.boards ? this.props.boards.map(board => <BoardCard board={board} />) : null
   }
 
   render() {

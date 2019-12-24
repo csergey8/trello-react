@@ -1,30 +1,28 @@
-import * as React from 'react';
-import Card from '@material-ui/core/Card';
-import { Task } from '../Task';
-import Typography from '@material-ui/core/Typography';
-import styles from './Board.module.scss';
+import React from 'react';
+import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getCardByIdSelector } from '../../redux/cards';
 
-interface BoardProps {
-    board: {
-        cards?: any[],
-        name: string, 
-        prefs?: any
-    };
-}
+let params: any;
+
+const Board = (props: any) => {
+  params = useParams();
+  console.log(params.id);
+  return (
+    <div>board</div>
+  );
+};
 
 
 
-export const Board: React.FC<BoardProps> = ({ board }: BoardProps) => {
-    const style = {
-        background: board.prefs.backgroundImage ? board.prefs.backgroundImage : board.prefs.background
-    }
-    return (
-        <React.Fragment>
-            <Card className={styles.card} style={style}>
-                <Typography color="textSecondary" variant="h6" gutterBottom>
-                    {board.name}
-                </Typography>
-            </Card>
-        </React.Fragment>
-    )
-}
+const mapStateToProps = (state: any) => ({
+  cards: state.cardsReducer.cards
+})
+
+const BoardWithRedux = connect(mapStateToProps)(Board);
+
+export { BoardWithRedux as Board };
+
+
+
+

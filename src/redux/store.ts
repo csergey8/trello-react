@@ -4,6 +4,7 @@ import auth, { AuthState } from './auth';
 import { boardsReducer } from './boards'
 import { createBrowserHistory } from 'history';
 import { userProfileReducer } from './userProfile';
+import { cardsReducer } from './cards';
 import { routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
@@ -12,12 +13,8 @@ export interface AppState {
   auth: AuthState;
   userProfileReducer: any;
   boardsReducer: any;
+  cardsReducer: any;
 }
-
-// const t = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
-
-// const composeEnhancers =
-//   process.env.NODE_ENV !== 'production' && t ? t : compose;
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -28,7 +25,8 @@ export default function configureStore() {
     router: connectRouter(history),
     auth,
     userProfileReducer,
-    boardsReducer
+    boardsReducer,
+    cardsReducer
   });
 
   return createStore(
