@@ -1,64 +1,27 @@
-import * as React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import styles from './Header.module.scss';
-import { NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { getTokenAction } from '../../redux/auth';
+import React, { FunctionComponent } from 'react';
 
-interface HeaderProps {
-  userProfile?: any;
-  logOut?: () => any;
-  getToken?: () => any;
+import { Link } from './Link';
+import { routes, AppRoute } from '../App/routes';
+import styles from './Header.module.scss';
+import { Counter } from '../Counter';
+
+interface Props {
+  onLogOut: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({userProfile, logOut, getToken}: HeaderProps) => {
-  const getUserInitials = (fullName: any): any => {
-    const fullNameArray = fullName.split(' ')
-    return `${fullNameArray[0][0]}${fullNameArray[1][0]}`
-  }
-  const renderUserControlPanel = () => userProfile ?
-    <NavLink to="/profile">
-      <IconButton
-        edge="end"
-        aria-label="account of current user"
-        aria-haspopup="true"
-        color="inherit"
-      >
-        <Avatar>{getUserInitials(userProfile.fullName)}</Avatar>
-      </IconButton>
-    </NavLink>
-    : null
+export const Header: FunctionComponent<Props> = ({ onLogOut }: Props) => {
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Button onClick={logOut}>
-          Logout
-        </Button>
-        <Button onClick={getToken}>
-          Login
-        </Button>
-        <IconButton edge="start" color="inherit" aria-label="menu">
-        </IconButton>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-          Trello React
-        </Typography>
-        {renderUserControlPanel()}
-      </Toolbar>
-    </AppBar>
+    <header className={styles.header}>
+      <div className={styles.content}>
+        {routes.map(({ title, path, isHidden }: AppRoute, i: number) =>
+          isHidden ? null : (
+            <Link key={i} title={title} path={path} />
+          )
+        )}
+        <Link title={'OAUTH'} path={'/oauth'} />
+        <Counter />
+        <button onClick={onLogOut}>Log out</button>
+      </div>
+    </header>
   );
 };
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getToken: () => dispatch(getTokenAction())
-  }
-}
-
-const HeaderWithRedux = connect(null, mapDispatchToProps)(Header);
-export { HeaderWithRedux as Header};
-
