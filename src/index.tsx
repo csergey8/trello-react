@@ -1,21 +1,29 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import './index.css';
-import { Provider } from 'react-redux';
-import { store } from './redux/index';
+import { createBrowserHistory } from 'history';
 import { App } from './components/App';
-import * as serviceWorker from './serviceWorker';
-import { BrowserRouter } from 'react-router-dom';
+import { ConnectedRouter } from 'connected-react-router';
+import { Provider as ReduxProvider } from 'react-redux';
+import { Provider } from 'mobx-react';
+import './index.scss';
+import configureStore from './store';
+import { init } from './store/initialization';
+import { observable, runInAction } from 'mobx';
+import { MyCoolStore } from './observables/MyCoolStore';
+
+const history = createBrowserHistory();
+const store = configureStore(history);
+store.dispatch(init());
+
+const mobxStore = new MyCoolStore();
+
+setInterval(() => mobxStore.increase(), 1000);
 
 ReactDOM.render(
-    <Provider store={store}>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-    </Provider>
-    , document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+  <ReduxProvider store={store}>
+    <ConnectedRouter history={history}>
+      <Provider myCoolStore={mobxStore}>
+        <App />
+      </Provider>
+    </ConnectedRouter>
+  </ReduxProvider>, document.querySelector('#root'));
