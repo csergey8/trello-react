@@ -16,10 +16,9 @@ export interface AppState {
   boards?: any;
 }
 
-const t = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const composeEnhancers =
-  process.env.NODE_ENV !== 'production' && t ? t : compose;
+
 
 export default function configureStore(history: History) {
   const rootReducer = combineReducers<AppState>({
