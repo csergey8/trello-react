@@ -21,17 +21,20 @@ export const initTokenThunk = (token?: string) => (dispatch: any) => {
   if(!token){
     const token = getFromLocalStorage(APP_TOKEN);
     const tokenValid = tokenValidation(token);
+    debugger;
     if(tokenValid && token) {
-      dispatch(getUserProfileThunk())
+      debugger;
       dispatch(setTokenThunk(token))
+      dispatch(getUserProfileThunk(token))
     } else {
       dispatch(deleteTokenThunk())
     }
   } else {
     const tokenValid = tokenValidation(token);
     if(tokenValid && token) {
-      dispatch(getUserProfileThunk())
+      debugger;
       dispatch(setTokenThunk(token))
+      dispatch(getUserProfileThunk(token))
     } else {
       dispatch(deleteTokenThunk())
     }
@@ -44,9 +47,9 @@ export const deleteTokenThunk = () => (dispatch: any) => {
   dispatch(deleteTokenAction())
 }
 
-const tokenValidation = async (token?: any) => {
-  const response = await fetch(`https://api.trello.com/1/members/me/?token=${token}&key=${process.env.REACT_APP_API_KEY}`);
-  const data = await response.json();
+const tokenValidation = (token?: any) => {
+  const response = fetch(`https://api.trello.com/1/members/me/?token=${token}&key=${process.env.REACT_APP_API_KEY}`);
+  const data = response
   console.log(data);
   return true;
 }

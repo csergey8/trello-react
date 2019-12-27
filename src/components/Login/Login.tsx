@@ -11,7 +11,6 @@ interface LoginProps {
 
 class Login extends Component<LoginProps> {
   render() {
-    
     if(this.props.isAuthenticated) {
       return <Redirect to='/dashboard' />
     }

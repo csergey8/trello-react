@@ -29,9 +29,11 @@ export const getUserProfileAction = (profile: any) => ({
     payload: profile
 })
 
-export const getUserProfileThunk = () => async(dispatch: any, getState: any) => {
+export const getUserProfileThunk = (token?: any) => async(dispatch: any, getState: any) => {
     const { auth } = await getState();
-    const response = await fetch(`https://api.trello.com/1/members/me/?token=${auth.token}&key=${process.env.REACT_APP_API_KEY}`);
+    let authToken = token ? token : auth.token
+    debugger;
+    const response = await fetch(`https://api.trello.com/1/members/me/?token=${authToken}&key=${process.env.REACT_APP_API_KEY}`);
     const data = await response.json();
     dispatch(getUserProfileAction(data));
 }
