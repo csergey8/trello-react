@@ -1,10 +1,15 @@
 import { ACTION_TYPES } from './types';
-import { getFromLocalStorage } from '../../utils';
+import { getFromLocalStorage, deleteFromLocalStorage, setToLocalStorage } from '../../utils';
+import { getUserProfileThunk } from '../userProfile';
 
 const APP_TOKEN = 'TREELLO_CUSTOM_APP_TOKEN';
 
 export const getTokenAction = () => ({
   type: ACTION_TYPES.GET_TOKEN
+})
+
+export const deleteTokenAction = () => ({
+  type: ACTION_TYPES.DELETE_TOKEN
 })
   
 export const setTokenAction = (token: string) => ({
@@ -12,9 +17,41 @@ export const setTokenAction = (token: string) => ({
     payload: token
 })
 
-export const tokenInitThunk = () => (dispatch: any) => {
-  const token = getFromLocalStorage(APP_TOKEN);
-  if(token) {
-    dispatch(setTokenAction(token))
+export const initTokenThunk = (token?: string) => (dispatch: any) => {
+  if(!token){
+    const token = getFromLocalStorage(APP_TOKEN);
+    const tokenValid = tokenValidation(token);
+    if(tokenValid && token) {
+      dispatch(getUserProfileThunk())
+      dispatch(setTokenThunk(token))
+    } else {
+      dispatch(deleteTokenThunk())
+    }
+  } else {
+    const tokenValid = tokenValidation(token);
+    if(tokenValid && token) {
+      dispatch(getUserProfileThunk())
+      dispatch(setTokenThunk(token))
+    } else {
+      dispatch(deleteTokenThunk())
+    }
   }
+}
+
+export const deleteTokenThunk = () => (dispatch: any) => {
+  console.log(dispatch)
+  deleteFromLocalStorage(APP_TOKEN);
+  dispatch(deleteTokenAction())
+}
+
+const tokenValidation = async (token?: any) => {
+  const response = await fetch(`https://api.trello.com/1/members/me/?token=${token}&key=${process.env.REACT_APP_API_KEY}`);
+  const data = await response.json();
+  console.log(data);
+  return true;
+}
+
+const setTokenThunk = (token?: any) => (dispatch: any) => {
+  setToLocalStorage(APP_TOKEN, token)
+  dispatch(setTokenAction(token))
 }

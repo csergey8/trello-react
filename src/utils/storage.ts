@@ -1,8 +1,12 @@
 export const setToLocalStorage = (key: string, data: any) => {
-  window.localStorage.setItem(key, data);
+  return window.localStorage.setItem(key, data);
 }
 
-export const getFromLocalStorage = (name: string) => {
-  const token = window.localStorage.getItem(name);
+export const getFromLocalStorage = (key: string) => {
+  const token = window.localStorage.getItem(key);
   return token
+}
+
+export const deleteFromLocalStorage = (key: string) => {
+  return window.localStorage.removeItem(key);
 }

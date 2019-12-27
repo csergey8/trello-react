@@ -1,19 +1,19 @@
 import React, { FunctionComponent } from "react";
 import { RouteChildrenProps, Redirect } from "react-router";
-import { isAuthenticated } from '../../redux/auth';
+import { isAuthenticated, initTokenThunk } from '../../redux/auth';
 import { connect } from 'react-redux';
 import { setToken } from "../../store/auth";
 
 interface OAuthProps extends RouteChildrenProps {
-  onSetToken?: (token: string) => void
+  onInitToken?: (token: string) => void
   
 }
 
-const OAuth: FunctionComponent<OAuthProps> = ({ location: { hash }, onSetToken }: OAuthProps) => {
+const OAuth: FunctionComponent<OAuthProps> = ({ location: { hash }, onInitToken }: OAuthProps) => {
   const token = hash.split('=')[1];
-  console.log(token)
-  onSetToken && onSetToken(token);
-  debugger;
+  if(token) {
+    onInitToken && onInitToken(token);
+  }
   return <Redirect to={'/dashboard'} />
 }
 
@@ -23,7 +23,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispathToProps = (dispatch: any) => {
   return {
-    onSetToken: (token: string) => dispatch(setToken(token))
+    onInitToken: (token: string) => dispatch(initTokenThunk(token))
   };
 };
 

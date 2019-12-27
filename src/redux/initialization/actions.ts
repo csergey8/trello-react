@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from './types';
-import { tokenInitThunk } from '../auth';
+import { initTokenThunk } from '../auth';
+import { getUserProfileThunk } from '../userProfile';
 
 export const init = () => ({
     type: ACTION_TYPES.INIT
@@ -19,6 +20,6 @@ export const reset = () => ({
 
 export const initThunk = () => (dispatch: any) => {
     dispatch(initStart());
-    dispatch(tokenInitThunk());
+    dispatch(initTokenThunk());
     dispatch(initEnd());
 }

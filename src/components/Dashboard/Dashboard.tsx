@@ -18,7 +18,6 @@ interface DashboardProps extends RouteChildrenProps {
 class Dashboard extends React.Component<DashboardProps> {
   componentDidMount() {
     this.props.getBoards();
-    this.props.getUserProfile();
   }
 
   goBack = () => {

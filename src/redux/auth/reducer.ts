@@ -15,6 +15,11 @@ export default (state: AuthState = initialAuthState, action: any ) => {
                 ...state,
                 token: action.payload
             }
+        case ACTION_TYPES.DELETE_TOKEN:
+            return { 
+                ...state,
+                token: ''
+            }
         case ACTION_TYPES.GET_TOKEN:
             return state
         default: 
