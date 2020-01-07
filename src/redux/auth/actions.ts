@@ -2,7 +2,7 @@ import { ACTION_TYPES } from './types';
 import { getFromLocalStorage, deleteFromLocalStorage, setToLocalStorage } from '../../utils';
 import { getUserProfileThunk } from '../userProfile';
 
-const APP_TOKEN = 'TREELLO_CUSTOM_APP_TOKEN';
+export const APP_TOKEN = 'TREELLO_CUSTOM_APP_TOKEN';
 
 export const getTokenAction = () => ({
   type: ACTION_TYPES.GET_TOKEN
@@ -17,24 +17,21 @@ export const setTokenAction = (token: string) => ({
     payload: token
 })
 
-export const initTokenThunk = (token?: string) => (dispatch: any) => {
+export const initTokenThunk = (token?: string) => async (dispatch: any) => {
   if(!token){
     const token = getFromLocalStorage(APP_TOKEN);
-    const tokenValid = tokenValidation(token);
-    debugger;
+    const tokenValid = await tokenValidation(token)
     if(tokenValid && token) {
-      debugger;
       dispatch(setTokenThunk(token))
-      dispatch(getUserProfileThunk(token))
+      dispatch(getUserProfileThunk())
     } else {
       dispatch(deleteTokenThunk())
     }
   } else {
-    const tokenValid = tokenValidation(token);
+    const tokenValid = await tokenValidation(token);
     if(tokenValid && token) {
-      debugger;
       dispatch(setTokenThunk(token))
-      dispatch(getUserProfileThunk(token))
+      dispatch(getUserProfileThunk())
     } else {
       dispatch(deleteTokenThunk())
     }
@@ -42,16 +39,13 @@ export const initTokenThunk = (token?: string) => (dispatch: any) => {
 }
 
 export const deleteTokenThunk = () => (dispatch: any) => {
-  console.log(dispatch)
   deleteFromLocalStorage(APP_TOKEN);
   dispatch(deleteTokenAction())
 }
 
-const tokenValidation = (token?: any) => {
-  const response = fetch(`https://api.trello.com/1/members/me/?token=${token}&key=${process.env.REACT_APP_API_KEY}`);
-  const data = response
-  console.log(data);
-  return true;
+const tokenValidation = async (token?: any) => {
+  const response = await fetch(`https://api.trello.com/1/members/me/?token=${token}&key=${process.env.REACT_APP_API_KEY}`);
+  return response.ok ? true : false
 }
 
 const setTokenThunk = (token?: any) => (dispatch: any) => {

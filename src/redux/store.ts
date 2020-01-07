@@ -5,6 +5,7 @@ import { boardsReducer } from './boards'
 import { createBrowserHistory } from 'history';
 import { userProfileReducer } from './userProfile';
 import { cardsReducer } from './cards';
+import { navigationReducer } from './navigation';
 import { routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
@@ -14,6 +15,7 @@ export interface AppState {
   userProfileReducer: any;
   boardsReducer: any;
   cardsReducer: any;
+  navigationReducer: any;
 }
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -26,7 +28,8 @@ export default function configureStore() {
     auth,
     userProfileReducer,
     boardsReducer,
-    cardsReducer
+    cardsReducer,
+    navigationReducer
   });
 
   return createStore(

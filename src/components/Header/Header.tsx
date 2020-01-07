@@ -36,7 +36,6 @@ const Header: React.FC<HeaderProps> = ({profile, logOut, getToken, history}: Hea
       </IconButton>
     : null
 
-  console.log(rest)
   return (
     <AppBar position="static">
       <Toolbar className={styles.header}>

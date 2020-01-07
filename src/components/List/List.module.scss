@@ -1,0 +1,18 @@
+.list {
+  padding: 10px;
+  width: 250px;
+  //height: auto;
+  margin: 5px;
+}
+
+.icon {
+  display: none;
+}
+
+.name {
+  font-weight: 500;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

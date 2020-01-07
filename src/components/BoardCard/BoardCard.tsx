@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Card from '@material-ui/core/Card';
+import Paper from '@material-ui/core/Paper';
 import { Task } from '../Task';
 import Typography from '@material-ui/core/Typography';
 import styles from './Board.module.scss';
@@ -17,16 +17,16 @@ interface BoardCardProps {
 
 
 export const BoardCard: React.FC<BoardCardProps> = ({ board }: BoardCardProps) => {
-    const style = {
-        background: board.prefs.backgroundImage ? board.prefs.backgroundImage : board.prefs.background
-    }
+
     return (
-        <NavLink to={`/board/${board.id}`}>
-            <Card className={styles.card} style={style}>
-                <Typography color="textSecondary" variant="h6" gutterBottom>
+        <NavLink to={`/board/${board.id}`} className={styles.text}>
+            <Paper className={styles.card} elevation={10}>
+                <Typography variant="h6" gutterBottom>
                     {board.name}
                 </Typography>
-            </Card>
+            </Paper>
         </NavLink>
     )
 }
+
+

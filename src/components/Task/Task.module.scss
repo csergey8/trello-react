@@ -1,4 +1,18 @@
 .task {
   margin: 10px 0;
   padding: 9px 9px;
+
+  .icon {
+    display: none;
+  }
+
+  &:hover {
+    color: black;
+    cursor: pointer;
+
+    .icon {
+      display: inline-block;
+    }
+  }
+
 }
